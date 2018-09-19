@@ -76,26 +76,31 @@ public class RandomGuessPlayer implements Player{
         for(int row = 0; row < numRow; row++) {
 
             for(int column = 0; column < numColumn; column++) {
+                // !!!!!!!!!! ---- ISSUE: how to create a co-ordinate outside world class ---->
 
-                World.Coordinate newCoordinate = Wold.newCoordinate();
+                // this works, not sure why
+                World.Coordinate newCoordinate = world.new Coordinate();
+
                 newCoordinate.row = row;
-                newCoordinate.column = column.
+                newCoordinate.column = column;
 
                 allCoordinates.add(newCoordinate);
             }
-        }
 
         // shuffle the array list to randomise
-        allCoordinates.shuffle();
+        Collections.shuffle(allCoordinates);
 
         // add the random order arraylist to the stack to random guess
 
-        Iterator allCoordinatesIterator = allCoordinates.Iterator();
-
+        Iterator allCoordinatesIterator = allCoordinates.iterator();
+        // System.out.println("allCoordinates element one: " + allCoordinates.get(0));
+        // !!   CURRENT ISSUE: ASSIGNING CO-ORDINATES FOR STACK !!!>
         while(allCoordinatesIterator.hasNext()) {
 
             World.Coordinate cooordinateToAdd = allCoordinatesIterator.next();
+        }
             this.coordinatesRandomOrder.push(cooordinateToAdd);
+
             // now have a stack of all coordinates in a random order
             // use this to create guesses in a random order
             // use of stack prevents same guesses occuring
@@ -117,10 +122,21 @@ public class RandomGuessPlayer implements Player{
 
     @Override
     public Guess makeGuess() {
-        // To be implemented.
 
-        // dummy return
-        return null;
+        // Implement some check to ensure stack not empty
+
+
+        // Have a stack of random coordinates
+        // pop one, use object to Generate a guess object
+        // return guess object
+
+        World.Coordinate newGuessCoordinate = this.coordinatesRandomOrder.pop();
+
+        Guess newGuess = new Guess();
+        newGuess.row = newGuessCoordinate.row;
+        newGuess.column = newGuessCoordinate.column;
+
+        return newGuess;
     } // end of makeGuess()
 
 
