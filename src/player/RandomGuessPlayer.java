@@ -60,6 +60,15 @@ public class RandomGuessPlayer implements Player{
         System.out.println("rows: " + world.numRow);
         System.out.println("colums: " + world.numColumn);
 
+        // number of Initial ships
+        this.numberOfShipsRemaing = world.shipLocations.size();
+
+        // storing inforamtion about the board
+        this.numRow = world.numRow;
+        this.numColumn = world.numColumn
+        this.gridSize = this.numRow * this.numColumn;
+
+
 
         System.out.println("\nEnd of initialisePlayer()\n");
 
