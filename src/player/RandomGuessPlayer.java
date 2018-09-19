@@ -27,10 +27,13 @@ public class RandomGuessPlayer implements Player{
     int numColumn;
     int gridSize;
 
-
     int numberOfShipsRemaing;
 
-    // queue of grid locations
+    // Store all potential coordinates
+    ArrayList<World.Coordinate> allCoordinates = new ArrayList<World.Coordinate>();
+
+    // Stack of grid locations
+    Stack<World.Coordinate> coordinatesRandomOrder = new Stack<World.Coordinate>();
 
     // initialisePlayer will set up the player ships, locations, and board
     @Override
@@ -65,7 +68,7 @@ public class RandomGuessPlayer implements Player{
 
         // storing inforamtion about the board
         this.numRow = world.numRow;
-        this.numColumn = world.numColumn
+        this.numColumn = world.numColumn;
         this.gridSize = this.numRow * this.numColumn;
 
 
