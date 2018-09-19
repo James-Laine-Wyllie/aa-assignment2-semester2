@@ -71,6 +71,35 @@ public class RandomGuessPlayer implements Player{
         this.numColumn = world.numColumn;
         this.gridSize = this.numRow * this.numColumn;
 
+        // fill in the arraylist of potential coordinates
+
+        for(int row = 0; row < numRow; row++) {
+
+            for(int column = 0; column < numColumn; column++) {
+
+                World.Coordinate newCoordinate = Wold.newCoordinate();
+                newCoordinate.row = row;
+                newCoordinate.column = column.
+
+                allCoordinates.add(newCoordinate);
+            }
+        }
+
+        // shuffle the array list to randomise
+        allCoordinates.shuffle();
+
+        // add the random order arraylist to the stack to random guess
+
+        Iterator allCoordinatesIterator = allCoordinates.Iterator();
+
+        while(allCoordinatesIterator.hasNext()) {
+
+            World.Coordinate cooordinateToAdd = allCoordinatesIterator.next();
+            this.coordinatesRandomOrder.push(cooordinateToAdd);
+            // now have a stack of all coordinates in a random order
+            // use this to create guesses in a random order
+            // use of stack prevents same guesses occuring
+        }
 
 
         System.out.println("\nEnd of initialisePlayer()\n");
