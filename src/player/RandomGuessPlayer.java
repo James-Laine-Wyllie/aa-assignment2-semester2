@@ -88,23 +88,31 @@ public class RandomGuessPlayer implements Player{
             }
 
         // shuffle the array list to randomise
-        Collections.shuffle(allCoordinates);
+        //Collections.shuffle(allCoordinates);
 
         // add the random order arraylist to the stack to random guess
+
+        for(int index = 0; index < allCoordinates.size(); index++) {
+
+            System.out.println("allCoordinates: element: " + index);
+            System.out.println(allCoordinates.get(index));
+            System.out.println("Type of: " + allCoordinates.get(index).getClass().getName());
+        }
 
         Iterator allCoordinatesIterator = allCoordinates.iterator();
         // System.out.println("allCoordinates element one: " + allCoordinates.get(0));
         // !!   CURRENT ISSUE: ASSIGNING CO-ORDINATES FOR STACK !!!>
-        while(allCoordinatesIterator.hasNext()) {
 
-            World.Coordinate cooordinateToAdd = allCoordinatesIterator.next();
-        }
-            this.coordinatesRandomOrder.push(cooordinateToAdd);
-
-            // now have a stack of all coordinates in a random order
-            // use this to create guesses in a random order
-            // use of stack prevents same guesses occuring
-        }
+        // while(allCoordinatesIterator.hasNext()) {
+        //
+        //     World.Coordinate cooordinateToAdd = allCoordinatesIterator.next();
+        // }
+        //     this.coordinatesRandomOrder.push(cooordinateToAdd);
+        //
+        //     // now have a stack of all coordinates in a random order
+        //     // use this to create guesses in a random order
+        //     // use of stack prevents same guesses occuring
+         }
 
 
         System.out.println("\nEnd of initialisePlayer()\n");
@@ -130,13 +138,14 @@ public class RandomGuessPlayer implements Player{
         // pop one, use object to Generate a guess object
         // return guess object
 
-        World.Coordinate newGuessCoordinate = this.coordinatesRandomOrder.pop();
-
-        Guess newGuess = new Guess();
-        newGuess.row = newGuessCoordinate.row;
-        newGuess.column = newGuessCoordinate.column;
-
-        return newGuess;
+        // World.Coordinate newGuessCoordinate = this.coordinatesRandomOrder.pop();
+        //
+        // Guess newGuess = new Guess();
+        // newGuess.row = newGuessCoordinate.row;
+        // newGuess.column = newGuessCoordinate.column;
+        //
+        // return newGuess;
+        return null;
     } // end of makeGuess()
 
 
