@@ -131,10 +131,10 @@ public class RandomGuessPlayer implements Player{
 
         // guess contains row and column not a co-ordinate object
 
-        World.Coordinate coordinate = world.new Coordinate();
+        World.Coordinate coordinatesOfShot = world.new Coordinate();
 
-        coordinate.row = guess.row;
-        coordinate.column = guess.column;
+        coordinatesOfShot.row = guess.row;
+        coordinatesOfShot.column = guess.column;
 
         // check for existance;
 
@@ -148,18 +148,42 @@ public class RandomGuessPlayer implements Player{
             System.out.println("Ship Location: ");
             System.out.println("Ship: " + shipLocation.ship);
             System.out.println("Location: ");
+            // Two ways to handle a hit:
+            // Arraylist conatins method --> return hit
+            // iterate through and match co-ordinates --> Benefit: get the actual coordinates of the hit
 
-            for(World.Coordinate coordinates : shipLocation.coordinates) {
+            // remove coordinates from the ship on hit, if empty after hit, ship is sunk
+            // Coordinate class has built in isSame() to check equality
 
-                System.out.println(coordinates.toString());
+            for(World.Coordinate coordinatesOfShip : shipLocation.coordinates) {
+
+                System.out.println(coordinatesOfShip.toString());
+
+                // potential issue with equals method --------- check if if not working as expected
+
+                if(coordinatesOfShot.equals(coordinatesOfShip)) {
+
+                    // hit condition
+                    answer.isHit = true;
+
+                    // remove coordinates from the ship to keep track of if ship is sunk
+                    // if all coordinates removed --> shipLocations.coordinates will be empty
+                    shipLocation.coordinates.remove(coordinatesOfShip);
+                }
+
+            }
+
+            if(shipLocation.coordinates.isEmpty()) {
+
+                answer.shipSunk = shipLocation.ship;
             }
 
             System.out.println();
 
         }
 
-        // dummy return
-        return null;
+
+        return answer;
     } // end of getAnswer()
 
 
