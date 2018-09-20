@@ -86,34 +86,33 @@ public class RandomGuessPlayer implements Player{
 
                 allCoordinates.add(newCoordinate);
             }
+        }
 
-        // shuffle the array list to randomise
-        //Collections.shuffle(allCoordinates);
 
-        // add the random order arraylist to the stack to random guess
 
         for(int index = 0; index < allCoordinates.size(); index++) {
 
             System.out.println("allCoordinates: element: " + index);
             System.out.println(allCoordinates.get(index).toString());
-            System.out.println("Type of: " + allCoordinates.get(index).getClass().getName());
+            System.out.println("Type of: " + allCoordinates.get(index).getClass().getName() + "\n");
         }
 
+        // shuffle the array list to randomise
+        Collections.shuffle(allCoordinates);
+
         Iterator allCoordinatesIterator = allCoordinates.iterator();
-        // System.out.println("allCoordinates element one: " + allCoordinates.get(0));
-        // !!   CURRENT ISSUE: ASSIGNING CO-ORDINATES FOR STACK !!!>
 
-        // while(allCoordinatesIterator.hasNext()) {
-        //
-        //     World.Coordinate cooordinateToAdd = allCoordinatesIterator.next();
-        // }
-        //     this.coordinatesRandomOrder.push(cooordinateToAdd);
-        //
-        //     // now have a stack of all coordinates in a random order
-        //     // use this to create guesses in a random order
-        //     // use of stack prevents same guesses occuring
-         }
+        // add the random order arraylist to the stack to random guess
 
+        while(allCoordinatesIterator.hasNext()) {
+
+            World.Coordinate cooordinateToAdd = (World.Coordinate) allCoordinatesIterator.next();
+            this.coordinatesRandomOrder.push(cooordinateToAdd);
+        }
+
+            // now have a stack of all coordinates in a random order
+            // use this to create guesses in a random order
+            // use of stack prevents same guesses occuring
 
         System.out.println("\nEnd of initialisePlayer()\n");
 
