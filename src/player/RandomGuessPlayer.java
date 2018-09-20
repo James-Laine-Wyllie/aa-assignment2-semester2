@@ -29,9 +29,8 @@ public class RandomGuessPlayer implements Player{
 
     int numberOfShipsRemaing;
 
-    // Store all potential coordinates
+    // Store all potential coordinates of grid
     ArrayList<World.Coordinate> allCoordinates = new ArrayList<World.Coordinate>();
-
     // Stack of grid locations
     Stack<World.Coordinate> coordinatesRandomOrder = new Stack<World.Coordinate>();
 
@@ -122,6 +121,43 @@ public class RandomGuessPlayer implements Player{
     public Answer getAnswer(Guess guess) {
         // To be implemented.
 
+        // construct an answer object
+
+        Answer answer = new Answer();
+
+        // guess object with coordinates
+        // we know our ship coordinates
+        // if guess coordinates match a ship coordinate -> hit else not hit
+
+        // guess contains row and column not a co-ordinate object
+
+        World.Coordinate coordinate = world.new Coordinate();
+
+        coordinate.row = guess.row;
+        coordinate.column = guess.column;
+
+        // check for existance;
+
+        // word contains an arraylist of shipLocations
+        // shiplocations is an object of:
+        // -- ship
+        // -- arraylist<Coordinate>
+
+        for(World.ShipLocation shipLocation : this.world.shipLocations) {
+
+            System.out.println("Ship Location: ");
+            System.out.println("Ship: " + shipLocation.ship);
+            System.out.println("Location: ");
+
+            for(World.Coordinate coordinates : shipLocation.coordinates) {
+
+                System.out.println(coordinates.toString());
+            }
+
+            System.out.println();
+
+        }
+
         // dummy return
         return null;
     } // end of getAnswer()
@@ -137,14 +173,14 @@ public class RandomGuessPlayer implements Player{
         // pop one, use object to Generate a guess object
         // return guess object
 
-        // World.Coordinate newGuessCoordinate = this.coordinatesRandomOrder.pop();
-        //
-        // Guess newGuess = new Guess();
-        // newGuess.row = newGuessCoordinate.row;
-        // newGuess.column = newGuessCoordinate.column;
-        //
-        // return newGuess;
-        return null;
+        World.Coordinate newGuessCoordinate = this.coordinatesRandomOrder.pop();
+
+        Guess newGuess = new Guess();
+        newGuess.row = newGuessCoordinate.row;
+        newGuess.column = newGuessCoordinate.column;
+
+        return newGuess;
+
     } // end of makeGuess()
 
 
