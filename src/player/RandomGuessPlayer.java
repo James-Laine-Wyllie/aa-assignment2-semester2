@@ -95,7 +95,7 @@ public class RandomGuessPlayer implements Player{
         for(int index = 0; index < allCoordinates.size(); index++) {
 
             System.out.println("allCoordinates: element: " + index);
-            System.out.println(allCoordinates.get(index));
+            System.out.println(allCoordinates.get(index).toString());
             System.out.println("Type of: " + allCoordinates.get(index).getClass().getName());
         }
 

@@ -36,6 +36,12 @@ public class World {
             return isSame;
     	}
 
+        @Override
+        public String toString() {
+
+            String details = "Row: " + this.row + "Column: " + this.column;
+            return details;
+        }
     }
 
     // nested class for storing ship locations.
