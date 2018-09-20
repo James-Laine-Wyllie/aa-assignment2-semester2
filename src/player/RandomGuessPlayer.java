@@ -211,6 +211,18 @@ public class RandomGuessPlayer implements Player{
     @Override
     public void update(Guess guess, Answer answer) {
         // To be implemented.
+
+        // update the board, draw a red x on board
+        this.world.drawShot(guess);
+
+        // update number of ships
+        if(answer.shipSunk != null) {
+
+            this.numberOfShipsRemaing--;
+        }
+
+        System.out.println(answer.toString());
+        System.out.println("Number of ships remaining: " + this.numberOfShipsRemaing + "\n");
     } // end of update()
 
 
@@ -218,7 +230,12 @@ public class RandomGuessPlayer implements Player{
     public boolean noRemainingShips() {
         // To be implemented.
 
-        // dummy return
+        // number of ships = 0, game over
+        if(this.numberOfShipsRemaing == 0) {
+
+            return false;
+        }
+
         return true;
     } // end of noRemainingShips()
 
