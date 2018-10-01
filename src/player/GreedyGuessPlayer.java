@@ -42,6 +42,12 @@ public class GreedyGuessPlayer  implements Player{
 
         // Store all potential coordinates of grid
         ArrayList<World.Coordinate> allCoordinates = new ArrayList<World.Coordinate>();
+        // A subset of allCoordinates, taking every second element
+        ArrayList<World.Coordinate> parityCoordinates = new ArrayList<World.Coordinate>();
+        Stack<World.Coordinate> coordinatesRandomOrder = new Stack<World.Coordinate>();
+        // Of a hit coordinate, the 4 potential neighbour coordinates N, E, S, W, max 4, min 0
+        // clear when ship is sunk
+        ArrayList<World.Coordinate> huntingCoordinates = new ArrayList<World.Coordinate>();
 
     @Override
     public void initialisePlayer(World world) {
@@ -101,9 +107,36 @@ public class GreedyGuessPlayer  implements Player{
             System.out.println("Type of: " + allCoordinates.get(index).getClass().getName() + "\n");
         }
 
+        // need to popuate parity, every second element from all co-ordinates
 
+        Iterator allCoordinatesIterator = allCoordinates.iterator();
 
+        // add the random order arraylist to the stack to random guess
 
+        while(allCoordinatesIterator.hasNext()) {
+
+            World.Coordinate cooordinateToAdd = (World.Coordinate) allCoordinatesIterator.next();
+            this.parityCoordinates.add(cooordinateToAdd);
+
+            if(allCoordinatesIterator.hasNext())) {
+
+                allCoordinatesIterator.next();
+            }
+        }
+
+        // randomise
+        Collections.shuffle(parityCoordinates);
+        Iterator parityCoordinatesIterator = parityCoordinates.iterator();
+
+        while(parityCoordinatesIterator.hasNext()) {
+
+            World.Coordinate parityCooordinateToAdd = (World.Coordinate) parityCoordinatesIterator.next();
+            this.coordinatesRandomOrder.push(parityCooordinateToAdd);
+        }
+
+        System.out.println("\nEnd of initialisePlayer()\n");
+
+        // have allCoordinates, parityCoordinates, and random order of parityCoordinates
 
     } // end of initialisePlayer()
 
@@ -118,8 +151,23 @@ public class GreedyGuessPlayer  implements Player{
 
     @Override
     public Guess makeGuess() {
-        // To be implemented.
+        // depends which mode it is in --> which co-ordinates it picks from
 
+        Guess guess = new Guess();
+
+        // if mode == TARGETING (will be on first guess)
+        // take from parity
+        // else take from huntingCoordinates
+
+        if(this.whichMode == TARGETING) {
+
+
+
+
+            // explicit else if for clarity / not required
+        } else if(this.whichMode == HUNTING) {
+
+        }
         // dummy return
         return null;
     } // end of makeGuess()
