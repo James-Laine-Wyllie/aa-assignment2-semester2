@@ -238,11 +238,73 @@ public class GreedyGuessPlayer  implements Player{
 
     @Override
     public void update(Guess guess, Answer answer) {
-        // To be implemented.
+
+        // update the board, draw a red x on board
+        this.world.drawShot(guess);
+
+
+        if(answer.isHit == true) {
+
+            this.whichMode = HUNTING;
+            // 4 potential coordinates from the neighbours
+            // however if a border position, might go outside grid
+
+            // make 4 world coordinates, check if exist in all
+            // if yes, add to PriorityQueue, if no disregard
+
+
+            ArrayList<World.Coordinate> checkCoordinates = new ArrayList<World.Coordinate>();
+
+            // hard coded 4: N, E, S, W
+            World.Coordinate newGuessCoordinateNorth = world.new Coordinate();
+            newGuessCoordinateNorth.row = guess.row;
+            newGuessCoordinateNorth.column = guess.column - 1;
+            checkCoordinates.add(newGuessCoordinateNorth);
+
+            World.Coordinate newGuessCoordinateEast = world.new Coordinate();
+            newGuessCoordinateEast.row = guess.row - 1;
+            newGuessCoordinateEast.column = guess.column;
+            checkCoordinates.add(newGuessCoordinateEast);
+
+            World.Coordinate newGuessCoordinateSouth = world.new Coordinate();
+            newGuessCoordinateSouth.row = guess.row;
+            newGuessCoordinateSouth.column = guess.column + 1;
+            checkCoordinates.add(newGuessCoordinateSouth);
+
+            World.Coordinate newGuessCoordinateWest = world.new Coordinate();
+            newGuessCoordinateWest.row = guess.row + 1;
+            newGuessCoordinateWest.column = guess.column;
+            checkCoordinates.add(newGuessCoordinateWest);
+
+            // for each to check existance
+            // check existance: yes add to queue
+
+            // for each element in checkCoordinates
+            // if existance in allCoordinates: add
+            // else: do nothing
+
+            for() {
+
+            }
+
+        }
+        // update number of ships
+        if(answer.shipSunk != null) {
+
+            // ship sunk, set back to TARGETING mode
+            this.whichMode = TARGETING;
+
+            this.numberOfShipsRemaing--;
+        }
+
+
+        System.out.println(answer.toString());
+        System.out.println("Number of ships remaining: " + this.numberOfShipsRemaing + "\n");
+
 
         // update will need to change the mode in this player if a hit
         // will also need to add neighbours to huntingCoordinates
-        
+
     } // end of update()
 
 
