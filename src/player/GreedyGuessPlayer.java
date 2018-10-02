@@ -283,11 +283,18 @@ public class GreedyGuessPlayer  implements Player{
             // if existance in allCoordinates: add
             // else: do nothing
 
-            for() {
+            for(World.Coordinate coordinate : checkCoordinates ) {
 
+                // if the coordinate to be checked exists in allCoordinates -> then part of board
+                if(this.allCoordinates.conatins(coordinate)) {
+
+                    this.huntingCoordinates.add(coordinate);
+                    this.allCoordinates.remove(coordinate);
+                }
             }
 
         }
+        
         // update number of ships
         if(answer.shipSunk != null) {
 
