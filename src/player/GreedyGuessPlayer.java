@@ -213,6 +213,11 @@ public class GreedyGuessPlayer  implements Player{
         // take from parity
         // else take from huntingCoordinates
 
+        if(this.huntingCoordinates.peek() != null) {
+
+            this.whichMode = Mode.HUNTING;
+        }
+
         if(this.whichMode == Mode.TARGETING) {
 
             if(this.coordinatesRandomOrder.empty() != true) {
@@ -326,7 +331,7 @@ public class GreedyGuessPlayer  implements Player{
 
             // ship sunk, set back to MODE.TARGETING mode
             this.whichMode = Mode.TARGETING;
-
+            this.huntingCoordinates.clear();
             this.numberOfShipsRemaing--;
         }
 
