@@ -248,7 +248,14 @@ public class GreedyGuessPlayer  implements Player{
 
             if(this.huntingCoordinates.peek() != null) {
 
+                System.out.println("---------------------------");
+                System.out.println("Hunting co-ordinates: ");
+                System.out.println("Size: " + this.huntingCoordinates.size());
+                System.out.println("---------------------------");
+
                 World.Coordinate newGuessCoordinate = this.huntingCoordinates.poll();
+                System.out.println("Polled coordinate: " + newGuessCoordinate);
+                System.out.println("--------------------");
                 this.allCoordinates.remove(newGuessCoordinate);
 
                 guess.row = newGuessCoordinate.row;
@@ -261,7 +268,9 @@ public class GreedyGuessPlayer  implements Player{
 
 
         }
-
+        System.out.println("Guess: ");
+        System.out.println("Row: " + guess.row + " Column: " + guess.column);
+        System.out.println("------------------\n");
         return guess;
     } // end of makeGuess()
 
@@ -272,10 +281,17 @@ public class GreedyGuessPlayer  implements Player{
         // update the board, draw a red x on board
         this.world.drawShot(guess);
 
+        System.out.println("Start of update method: ");
+        System.out.println("this.whichMode: " + this.whichMode);
 
         if(answer.isHit == true) {
 
+            System.out.println("Answer.isHit = true");
+
             this.whichMode = Mode.HUNTING;
+
+            System.out.println("this.whichMode: " + this.whichMode);
+
             // 4 potential coordinates from the neighbours
             // however if a border position, might go outside grid
 
@@ -315,12 +331,16 @@ public class GreedyGuessPlayer  implements Player{
 
             for(World.Coordinate coordinate : checkCoordinates ) {
 
+                System.out.println("The coordinates to add: ");
+                System.out.println("Coordinate: " + coordinate);
+
                 // if the coordinate to be checked exists in allCoordinates -> then part of board
                 if(this.allCoordinates.contains(coordinate)) {
 
+                    System.out.println("Added: " + coordinate);
                     this.huntingCoordinates.addFirst(coordinate);
 
-                    this.allCoordinates.remove(coordinate);
+                    // this.allCoordinates.remove(coordinate);
                 }
             }
 
@@ -332,7 +352,7 @@ public class GreedyGuessPlayer  implements Player{
             // ship sunk, set back to MODE.TARGETING mode
             this.whichMode = Mode.TARGETING;
             this.huntingCoordinates.clear();
-            
+
             this.numberOfShipsRemaing--;
         }
 
