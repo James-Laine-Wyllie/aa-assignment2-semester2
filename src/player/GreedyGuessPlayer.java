@@ -48,7 +48,7 @@ public class GreedyGuessPlayer  implements Player{
         Stack<World.Coordinate> coordinatesRandomOrder = new Stack<World.Coordinate>();
         // Of a hit coordinate, the 4 potential neighbour coordinates N, E, S, W, max 4, min 0
         // clear when ship is sunk
-        PriorityQueue<World.Coordinate> huntingCoordinates = new PriorityQueue<World.Coordinate>();
+        ArrayDeque<World.Coordinate> huntingCoordinates = new ArrayDeque<World.Coordinate>();
 
     @Override
     public void initialisePlayer(World world) {
@@ -215,23 +215,46 @@ public class GreedyGuessPlayer  implements Player{
 
         if(this.whichMode == Mode.TARGETING) {
 
-            World.Coordinate newGuessCoordinate = this.coordinatesRandomOrder.pop();
+            if(this.coordinatesRandomOrder.empty() != true) {
 
-            guess.row = newGuessCoordinate.row;
-            guess.column = newGuessCoordinate.column;
-            // return guess;
+                World.Coordinate newGuessCoordinate = this.coordinatesRandomOrder.pop();
+                // removes from all coordinates
+                this.allCoordinates.remove(newGuessCoordinate);
+
+                guess.row = newGuessCoordinate.row;
+                guess.column = newGuessCoordinate.column;
+
+            } else {
+
+                // select an element from all coordinates, use this to make a guess
+                World.Coordinate newGuessCoordinate = this.allCoordinates.get(0);
+
+                this.allCoordinates.remove(newGuessCoordinate);
+
+                guess.row = newGuessCoordinate.row;
+                guess.column = newGuessCoordinate.column;
+            }
 
             // explicit else if for clarity / not required
         } else if(this.whichMode == Mode.HUNTING) {
 
             // select top PriorityQueue element
+            // ensures an empty sack does not get poped
 
-            World.Coordinate newGuessCoordinate = this.huntingCoordinates.poll();
+            if(this.huntingCoordinates.peek() != null) {
 
-            guess.row = newGuessCoordinate.row;
-            guess.column = newGuessCoordinate.column;
+                World.Coordinate newGuessCoordinate = this.huntingCoordinates.poll();
+                this.allCoordinates.remove(newGuessCoordinate);
 
-            // return guess;
+                guess.row = newGuessCoordinate.row;
+                guess.column = newGuessCoordinate.column;
+            } else {
+
+                this.whichMode = Mode.TARGETING;
+                guess = makeGuess();
+            }
+
+
         }
 
         return guess;
@@ -290,7 +313,8 @@ public class GreedyGuessPlayer  implements Player{
                 // if the coordinate to be checked exists in allCoordinates -> then part of board
                 if(this.allCoordinates.contains(coordinate)) {
 
-                    this.huntingCoordinates.add(coordinate);
+                    this.huntingCoordinates.addFirst(coordinate);
+
                     this.allCoordinates.remove(coordinate);
                 }
             }
