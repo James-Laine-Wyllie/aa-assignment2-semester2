@@ -2,6 +2,7 @@ package player;
 
 import java.util.Scanner;
 import world.World;
+import java.util.*;
 
 /**
  * Greedy guess player (task B).
@@ -9,7 +10,7 @@ import world.World;
  *
  * @author Youhan Xia, Jeffrey Chan
  */
-public enum Mode {
+enum Mode {
 
     TARGETING,
     HUNTING
@@ -33,8 +34,8 @@ public class GreedyGuessPlayer  implements Player{
 
         int numberOfShipsRemaing;
 
-        // keep track of which mode the player is in, defaut is TARGETING
-        Mode whichMode = TARGETING;
+        // keep track of which mode the player is in, defaut is MODE.TARGETING
+        Mode whichMode = Mode.TARGETING;
 
         // want to keep track of all co-ordinates, parity co-ordinates, co-ordinates guessed
         // neighbour co-ordinate of a correct guess will be in allCoordinates
@@ -118,7 +119,7 @@ public class GreedyGuessPlayer  implements Player{
             World.Coordinate cooordinateToAdd = (World.Coordinate) allCoordinatesIterator.next();
             this.parityCoordinates.add(cooordinateToAdd);
 
-            if(allCoordinatesIterator.hasNext())) {
+            if(allCoordinatesIterator.hasNext()) {
 
                 allCoordinatesIterator.next();
             }
@@ -208,31 +209,32 @@ public class GreedyGuessPlayer  implements Player{
 
         Guess guess = new Guess();
 
-        // if mode == TARGETING (will be on first guess)
+        // if mode == MODE.TARGETING (will be on first guess)
         // take from parity
         // else take from huntingCoordinates
 
-        if(this.whichMode == TARGETING) {
+        if(this.whichMode == Mode.TARGETING) {
 
             World.Coordinate newGuessCoordinate = this.coordinatesRandomOrder.pop();
 
-            newGuess.row = newGuessCoordinate.row;
-            newGuess.column = newGuessCoordinate.column;
-            return newGuess;
+            guess.row = newGuessCoordinate.row;
+            guess.column = newGuessCoordinate.column;
+            // return guess;
 
             // explicit else if for clarity / not required
-        } else if(this.whichMode == HUNTING) {
+        } else if(this.whichMode == Mode.HUNTING) {
 
             // select top PriorityQueue element
 
             World.Coordinate newGuessCoordinate = this.huntingCoordinates.poll();
 
-            newGuess.row = newGuessCoordinate.row;
-            newGuess.column = newGuessCoordinate.column;
+            guess.row = newGuessCoordinate.row;
+            guess.column = newGuessCoordinate.column;
 
-            return newGuess;
+            // return guess;
         }
 
+        return guess;
     } // end of makeGuess()
 
 
@@ -245,7 +247,7 @@ public class GreedyGuessPlayer  implements Player{
 
         if(answer.isHit == true) {
 
-            this.whichMode = HUNTING;
+            this.whichMode = Mode.HUNTING;
             // 4 potential coordinates from the neighbours
             // however if a border position, might go outside grid
 
@@ -286,7 +288,7 @@ public class GreedyGuessPlayer  implements Player{
             for(World.Coordinate coordinate : checkCoordinates ) {
 
                 // if the coordinate to be checked exists in allCoordinates -> then part of board
-                if(this.allCoordinates.conatins(coordinate)) {
+                if(this.allCoordinates.contains(coordinate)) {
 
                     this.huntingCoordinates.add(coordinate);
                     this.allCoordinates.remove(coordinate);
@@ -294,12 +296,12 @@ public class GreedyGuessPlayer  implements Player{
             }
 
         }
-        
+
         // update number of ships
         if(answer.shipSunk != null) {
 
-            // ship sunk, set back to TARGETING mode
-            this.whichMode = TARGETING;
+            // ship sunk, set back to MODE.TARGETING mode
+            this.whichMode = Mode.TARGETING;
 
             this.numberOfShipsRemaing--;
         }
