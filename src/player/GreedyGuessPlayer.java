@@ -352,15 +352,15 @@ public class GreedyGuessPlayer  implements Player{
             // don't clear the entire stack, just the coordinates in ship_sunk
             // leaves the coordinates of a ship if adjacent.
 
-            for(World.Coordinate coordinatesOfShip : answer.shipSunk.shipLocation.coordinates) {
+            // for(World.Coordinate coordinatesOfShip : answer.shipSunk.shipLocations.coordinates) {
+            //
+            //     if(this.huntingCoordinates.contains(coordinatesOfShip)) {
+            //
+            //         this.huntingCoordinates.remove(coordinatesOfShip);
+            //     }
+            // }
 
-                if(this.huntingCoordinates.contains(coordinatesOfShip)) {
-
-                    this.huntingCoordinates.remove(coordinatesOfShip);
-                }
-            }
-
-            // this.huntingCoordinates.clear();
+            this.huntingCoordinates.clear();
 
             // ship sunk, set back to MODE.TARGETING mode
             this.whichMode = Mode.TARGETING;
