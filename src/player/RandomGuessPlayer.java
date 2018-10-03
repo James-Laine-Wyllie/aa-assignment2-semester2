@@ -228,7 +228,6 @@ public class RandomGuessPlayer implements Player{
 
     @Override
     public boolean noRemainingShips() {
-        // To be implemented.
 
         // number of ships = 0, game over
         if(this.numberOfShipsRemaing == 0) {
