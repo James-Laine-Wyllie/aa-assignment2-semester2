@@ -5,391 +5,95 @@ import world.World;
 import java.util.*;
 
 /**
- * Greedy guess player (task B).
- * Please implement this class.
- *
- * @author Youhan Xia, Jeffrey Chan
- */
-enum Mode {
+* Greedy guess player (task B).
+* Please implement this class.
+*
+* @author Youhan Xia, Jeffrey Chan
+*/
 
-    TARGETING,
-    HUNTING
+enum Mode {
+  TARGETING,
+  HUNTING
 }
 
-public class GreedyGuessPlayer  implements Player{
+public class GreedyGuessPlayer implements Player{
+  World world;
+  int ships, numberOfShipsRemaing;
 
-        // attributes to keep track of ships, co-ordinates, and remaining ships
+  // Store all potential coordinates of grid
+  ArrayList<World.Coordinate> allCoordinates = new ArrayList<World.Coordinate>();
+  // Stack of grid locations
+  ArrayList<World.Coordinate> parityCoordinates = new ArrayList<World.Coordinate>();
 
-        World world;
+  @Override
+  public void initialisePlayer(World world) {
+    // Keep track of the board and ships
+    this.world = world;
+    this.ships = world.shipLocations.size();
+    this.numberOfShipsRemaing = this.ships;
+    // iterate through all of the world grid coords and store parityCoordinates
+    for(int row = 0; row < world.numRow; row++) {
+      for(int column = 0; column < world.numColumn; column++) {
+        World.Coordinate newCoordinate = world.new Coordinate();
+        newCoordinate.row = row;
+        newCoordinate.column = column;
 
-        // these can be accesed via the world object: this.world.numRow
-        // convient varaible to keep track inside player
-
-        // to keep track of guesses made on board add combination of rows x column
-        // to a queue and pop
-        // ensures guess only made once, and random
-        int numRow;
-        int numColumn;
-        int gridSize;
-
-        int numberOfShipsRemaing;
-
-        // keep track of which mode the player is in, defaut is MODE.TARGETING
-        Mode whichMode = Mode.TARGETING;
-
-        // want to keep track of all co-ordinates, parity co-ordinates, co-ordinates guessed
-        // neighbour co-ordinate of a correct guess will be in allCoordinates
-        // unless already guessed -- prevent repeat guesses
-
-        // Store all potential coordinates of grid
-        ArrayList<World.Coordinate> allCoordinates = new ArrayList<World.Coordinate>();
-        // A subset of allCoordinates, taking every second element
-        ArrayList<World.Coordinate> parityCoordinates = new ArrayList<World.Coordinate>();
-        Stack<World.Coordinate> coordinatesRandomOrder = new Stack<World.Coordinate>();
-        // Of a hit coordinate, the 4 potential neighbour coordinates N, E, S, W, max 4, min 0
-        // clear when ship is sunk
-        ArrayDeque<World.Coordinate> huntingCoordinates = new ArrayDeque<World.Coordinate>();
-
-    @Override
-    public void initialisePlayer(World world) {
-
-        this.world = world;
-
-        System.out.println("initialisePlayer Test");
-        System.out.println("initialisePlayer: ");
-        System.out.println("World Information: ");
-        System.out.println("Number of ships: " + world.shipLocations.size());
-        // ship in ship co-ordinates has an associated ship and coordinate
-
-        for(int i = 0; i < world.shipLocations.size(); i++) {
-
-            System.out.println();
-            System.out.println("Ship information: ");
-            System.out.println("Ship: " + world.shipLocations.get(i).ship);
-            System.out.println("coordinates: " + world.shipLocations.get(i).coordinates.get(0));
-            System.out.println("------------------------------");
-
+        allCoordinates.add(newCoordinate);
+        // on every odd row, use odd column, else use even col when on even row
+        if(((row % 2 != 0) && (column % 2 != 0)) || ((row % 2 == 0) && (column % 2 == 0))) {
+          parityCoordinates.add(newCoordinate);
         }
-
-
-        System.out.println("Size of grid: ");
-        System.out.println("rows: " + world.numRow);
-        System.out.println("colums: " + world.numColumn);
-
-        // number of Initial ships
-        this.numberOfShipsRemaing = world.shipLocations.size();
-
-        // storing inforamtion about the board
-        this.numRow = world.numRow;
-        this.numColumn = world.numColumn;
-        this.gridSize = this.numRow * this.numColumn;
-
-        for(int row = 0; row < numRow; row++) {
-
-            for(int column = 0; column < numColumn; column++) {
-                // !!!!!!!!!! ---- ISSUE: how to create a co-ordinate outside world class ---->
-
-                // this works, not sure why
-                World.Coordinate newCoordinate = world.new Coordinate();
-
-                newCoordinate.row = row;
-                newCoordinate.column = column;
-
-                allCoordinates.add(newCoordinate);
-            }
-        }
-
-
-
-        for(int index = 0; index < allCoordinates.size(); index++) {
-
-            System.out.println("allCoordinates: element: " + index);
-            System.out.println(allCoordinates.get(index).toString());
-            System.out.println("Type of: " + allCoordinates.get(index).getClass().getName() + "\n");
-        }
-
-        // need to popuate parity, every second element from all co-ordinates
-
-        Iterator allCoordinatesIterator = allCoordinates.iterator();
-
-        // add the random order arraylist to the stack to random guess
-
-        while(allCoordinatesIterator.hasNext()) {
-
-            World.Coordinate cooordinateToAdd = (World.Coordinate) allCoordinatesIterator.next();
-            this.parityCoordinates.add(cooordinateToAdd);
-
-            if(allCoordinatesIterator.hasNext()) {
-
-                allCoordinatesIterator.next();
-            }
-        }
-
-        // randomise
-        Collections.shuffle(parityCoordinates);
-        Iterator parityCoordinatesIterator = parityCoordinates.iterator();
-
-        while(parityCoordinatesIterator.hasNext()) {
-
-            World.Coordinate parityCooordinateToAdd = (World.Coordinate) parityCoordinatesIterator.next();
-            this.coordinatesRandomOrder.push(parityCooordinateToAdd);
-        }
-
-        System.out.println("\nEnd of initialisePlayer()\n");
-
-        // have allCoordinates, parityCoordinates, and random order of parityCoordinates
-
-    } // end of initialisePlayer()
-
-    @Override
-    public Answer getAnswer(Guess guess) {
-
-        Answer answer = new Answer();
-
-        World.Coordinate coordinatesOfShot = world.new Coordinate();
-
-        coordinatesOfShot.row = guess.row;
-        coordinatesOfShot.column = guess.column;
-
-        // check for existance;
-
-        // word contains an arraylist of shipLocations
-        // shiplocations is an object of:
-        // -- ship
-        // -- arraylist<Coordinate>
-
-        for(World.ShipLocation shipLocation : this.world.shipLocations) {
-
-            System.out.println("Ship Location: ");
-            System.out.println("Ship: " + shipLocation.ship);
-            System.out.println("Location: ");
-            // Two ways to handle a hit:
-            // Arraylist conatins method --> return hit
-            // iterate through and match co-ordinates --> Benefit: get the actual coordinates of the hit
-
-            // remove coordinates from the ship on hit, if empty after hit, ship is sunk
-            // Coordinate class has built in isSame() to check equality
-
-            for(World.Coordinate coordinatesOfShip : shipLocation.coordinates) {
-
-                System.out.println(coordinatesOfShip.toString());
-
-                // potential issue with equals method --------- check if if not working as expected
-
-                if(coordinatesOfShot.equals(coordinatesOfShip)) {
-
-                    // hit condition
-                    answer.isHit = true;
-
-                    // remove coordinates from the ship to keep track of if ship is sunk
-                    // if all coordinates removed --> shipLocations.coordinates will be empty
-                    shipLocation.coordinates.remove(coordinatesOfShip);
-                }
-
-            }
-
-            if(shipLocation.coordinates.isEmpty()) {
-
-                answer.shipSunk = shipLocation.ship;
-            }
-
-            System.out.println();
-
-        }
-
-
-        return answer;
-
-    } // end of getAnswer()
-
-
-    @Override
-    public Guess makeGuess() {
-        // depends which mode it is in --> which co-ordinates it picks from
-
-        Guess guess = new Guess();
-
-        // if mode == MODE.TARGETING (will be on first guess)
-        // take from parity
-        // else take from huntingCoordinates
-
-        if(this.huntingCoordinates.peek() != null) {
-
-            this.whichMode = Mode.HUNTING;
-        }
-
-        if(this.whichMode == Mode.TARGETING) {
-
-            if(this.coordinatesRandomOrder.empty() != true) {
-
-                World.Coordinate newGuessCoordinate = this.coordinatesRandomOrder.pop();
-                // removes from all coordinates
-                this.allCoordinates.remove(newGuessCoordinate);
-
-                guess.row = newGuessCoordinate.row;
-                guess.column = newGuessCoordinate.column;
-
-            } else {
-
-                // select an element from all coordinates, use this to make a guess
-                World.Coordinate newGuessCoordinate = this.allCoordinates.get(0);
-
-                this.allCoordinates.remove(newGuessCoordinate);
-
-                guess.row = newGuessCoordinate.row;
-                guess.column = newGuessCoordinate.column;
-            }
-
-            // explicit else if for clarity / not required
-        } else if(this.whichMode == Mode.HUNTING) {
-
-            // select top PriorityQueue element
-            // ensures an empty sack does not get poped
-
-            if(this.huntingCoordinates.peek() != null) {
-
-                System.out.println("---------------------------");
-                System.out.println("Hunting co-ordinates: ");
-                System.out.println("Size: " + this.huntingCoordinates.size());
-                System.out.println("---------------------------");
-
-                World.Coordinate newGuessCoordinate = this.huntingCoordinates.poll();
-                System.out.println("Polled coordinate: " + newGuessCoordinate);
-                System.out.println("--------------------");
-                this.allCoordinates.remove(newGuessCoordinate);
-
-                guess.row = newGuessCoordinate.row;
-                guess.column = newGuessCoordinate.column;
-            } else {
-
-                this.whichMode = Mode.TARGETING;
-                guess = makeGuess();
-            }
-
-
-        }
-        System.out.println("Guess: ");
-        System.out.println("Row: " + guess.row + " Column: " + guess.column);
-        System.out.println("------------------\n");
-        return guess;
-    } // end of makeGuess()
-
-
-    @Override
-    public void update(Guess guess, Answer answer) {
-
-        // update the board, draw a red x on board
-        this.world.drawShot(guess);
-
-        System.out.println("Start of update method: ");
-        System.out.println("this.whichMode: " + this.whichMode);
-
-        if(answer.isHit == true) {
-
-            System.out.println("Answer.isHit = true");
-
-            this.whichMode = Mode.HUNTING;
-
-            System.out.println("this.whichMode: " + this.whichMode);
-
-            // 4 potential coordinates from the neighbours
-            // however if a border position, might go outside grid
-
-            // make 4 world coordinates, check if exist in all
-            // if yes, add to PriorityQueue, if no disregard
-
-
-            ArrayList<World.Coordinate> checkCoordinates = new ArrayList<World.Coordinate>();
-
-            // hard coded 4: N, E, S, W
-            World.Coordinate newGuessCoordinateNorth = world.new Coordinate();
-            newGuessCoordinateNorth.row = guess.row;
-            newGuessCoordinateNorth.column = guess.column - 1;
-            checkCoordinates.add(newGuessCoordinateNorth);
-
-            World.Coordinate newGuessCoordinateEast = world.new Coordinate();
-            newGuessCoordinateEast.row = guess.row - 1;
-            newGuessCoordinateEast.column = guess.column;
-            checkCoordinates.add(newGuessCoordinateEast);
-
-            World.Coordinate newGuessCoordinateSouth = world.new Coordinate();
-            newGuessCoordinateSouth.row = guess.row;
-            newGuessCoordinateSouth.column = guess.column + 1;
-            checkCoordinates.add(newGuessCoordinateSouth);
-
-            World.Coordinate newGuessCoordinateWest = world.new Coordinate();
-            newGuessCoordinateWest.row = guess.row + 1;
-            newGuessCoordinateWest.column = guess.column;
-            checkCoordinates.add(newGuessCoordinateWest);
-
-            // for each to check existance
-            // check existance: yes add to queue
-
-            // for each element in checkCoordinates
-            // if existance in allCoordinates: add
-            // else: do nothing
-
-            for(World.Coordinate coordinate : checkCoordinates ) {
-
-                System.out.println("The coordinates to add: ");
-                System.out.println("Coordinate: " + coordinate);
-
-                // if the coordinate to be checked exists in allCoordinates -> then part of board
-                if(this.allCoordinates.contains(coordinate)) {
-
-                    System.out.println("Added: " + coordinate);
-                    this.huntingCoordinates.addFirst(coordinate);
-
-                    // this.allCoordinates.remove(coordinate);
-                }
-            }
-
-        }
-
-        // update number of ships
-        if(answer.shipSunk != null) {
-
-            // don't clear the entire stack, just the coordinates in ship_sunk
-            // leaves the coordinates of a ship if adjacent.
-
-            // for(World.Coordinate coordinatesOfShip : answer.shipSunk.shipLocations.coordinates) {
-            //
-            //     if(this.huntingCoordinates.contains(coordinatesOfShip)) {
-            //
-            //         this.huntingCoordinates.remove(coordinatesOfShip);
-            //     }
-            // }
-
-            this.huntingCoordinates.clear();
-
-            // ship sunk, set back to MODE.TARGETING mode
-            this.whichMode = Mode.TARGETING;
-
-            this.numberOfShipsRemaing--;
-        }
-
-
-        System.out.println(answer.toString());
-        System.out.println("Number of ships remaining: " + this.numberOfShipsRemaing + "\n");
-
-
-        // update will need to change the mode in this player if a hit
-        // will also need to add neighbours to huntingCoordinates
-
-    } // end of update()
-
-
-    @Override
-    public boolean noRemainingShips() {
-
-        // number of ships = 0, game over
-        if(this.numberOfShipsRemaing == 0) {
-
-            return false;
-        }
-
-        return true;
-
-    } // end of noRemainingShips()
-
+      }
+    }
+  } // end of initialisePlayer()
+
+  @Override
+  public Answer getAnswer(Guess guess) {
+    // Create a new answer with hit = false, and sunk = null
+    // Answer answer;
+    // World.Coordinate shot = world.new Coordinate();
+    // shot.row = guess.row;
+    // shot.column = guess.column;
+    // if the guess' row and column match a ship, flag it as hit
+    // ArrayList<ShipLocation> shipLocs = this.world.shipLocations;
+
+    // for(ShipLocation shipLoc : shipLocs) {
+    //   if(shot.equals(shipLoc)) {
+    //     answer.isHit = true;
+    //     // if the hit was a killing blow, set this to the scuttled ship object
+    //     if() {
+    //       /* value of the sunk ship */
+    //       answer.shipSunk = shipLoc.ship;
+    //     }
+    //   }
+    // }
+    // return the answer, if miss or hit, and whether or not the ship is sunk
+    return null;
+  } // end of getAnswer()
+
+  @Override
+  public Guess makeGuess() {
+
+    return null;
+  } // end of makeGuess()
+
+  @Override
+  public void update(Guess guess, Answer answer) {
+    // update the board, draw a red x on board
+    this.world.drawShot(guess);
+
+    // Decrement ships remaining if answer contains sunk as a ship
+    if(answer.shipSunk != null) {
+      this.numberOfShipsRemaing--;
+    }
+  } // end of update()
+
+  @Override
+  public boolean noRemainingShips() {
+    // number of ships == 0 => game over
+    if(this.numberOfShipsRemaing == 0){
+      return true;
+    }
+    return false;
+  } // end of noRemainingShips()
 } // end of class GreedyGuessPlayer
