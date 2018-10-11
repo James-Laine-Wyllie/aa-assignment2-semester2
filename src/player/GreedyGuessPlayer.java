@@ -10,7 +10,6 @@ import java.util.*;
 *
 * @author Youhan Xia, Jeffrey Chan
 */
-
 enum Mode {
   TARGETING,
   HUNTING
@@ -23,7 +22,7 @@ public class GreedyGuessPlayer implements Player{
   // Store all potential coordinates of grid
   ArrayList<World.Coordinate> allCoordinates = new ArrayList<World.Coordinate>();
   // Stack of grid locations
-  ArrayList<World.Coordinate> parityCoordinates = new ArrayList<World.Coordinate>();
+  Stack<World.Coordinate> parityCoordinates = new Stack<World.Coordinate>();
 
   @Override
   public void initialisePlayer(World world) {
@@ -41,7 +40,7 @@ public class GreedyGuessPlayer implements Player{
         allCoordinates.add(newCoordinate);
         // on every odd row, use odd column, else use even col when on even row
         if(((row % 2 != 0) && (column % 2 != 0)) || ((row % 2 == 0) && (column % 2 == 0))) {
-          parityCoordinates.add(newCoordinate);
+          parityCoordinates.push(newCoordinate);
         }
       }
     }
@@ -73,8 +72,14 @@ public class GreedyGuessPlayer implements Player{
 
   @Override
   public Guess makeGuess() {
+    // Update this method to use the parityCoordinates in hunting mode
+    World.Coordinate newGuessCoordinate = this.parityCoordinates.pop();
 
-    return null;
+    Guess newGuess = new Guess();
+    newGuess.row = newGuessCoordinate.row;
+    newGuess.column = newGuessCoordinate.column;
+
+    return newGuess;
   } // end of makeGuess()
 
   @Override
