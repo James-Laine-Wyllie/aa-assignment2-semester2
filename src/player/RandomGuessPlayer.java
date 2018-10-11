@@ -232,10 +232,10 @@ public class RandomGuessPlayer implements Player{
         // number of ships = 0, game over
         if(this.numberOfShipsRemaing == 0) {
 
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     } // end of noRemainingShips()
 
 } // end of class RandomGuessPlayer

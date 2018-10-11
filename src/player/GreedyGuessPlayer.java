@@ -392,10 +392,10 @@ public class GreedyGuessPlayer  implements Player{
         // number of ships = 0, game over
         if(this.numberOfShipsRemaing == 0) {
 
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
 
     } // end of noRemainingShips()
 
