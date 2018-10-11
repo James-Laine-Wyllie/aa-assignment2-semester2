@@ -160,6 +160,8 @@ public class GreedyGuessPlayer  implements Player{
         // -- ship
         // -- arraylist<Coordinate>
 
+        Iterator shipLocations = this.world.shipLocations.iterator();
+
         for(World.ShipLocation shipLocation : this.world.shipLocations) {
 
             System.out.println("Ship Location: ");
