@@ -18,37 +18,39 @@ enum Mode {
 
 public class GreedyGuessPlayer  implements Player{
 
-        // attributes to keep track of ships, co-ordinates, and remaining ships
+    // attributes to keep track of ships, co-ordinates, and remaining ships
 
-        World world;
+    World world;
 
-        // these can be accesed via the world object: this.world.numRow
-        // convient varaible to keep track inside player
+    // these can be accesed via the world object: this.world.numRow
+    // convient varaible to keep track inside player
 
-        // to keep track of guesses made on board add combination of rows x column
-        // to a queue and pop
-        // ensures guess only made once, and random
-        int numRow;
-        int numColumn;
-        int gridSize;
+    // to keep track of guesses made on board add combination of rows x column
+    // to a queue and pop
+    // ensures guess only made once, and random
+    int numRow;
+    int numColumn;
+    int gridSize;
 
-        int numberOfShipsRemaing;
+    Random random = new Random();
 
-        // keep track of which mode the player is in, defaut is MODE.TARGETING
-        Mode whichMode = Mode.TARGETING;
+    int numberOfShipsRemaing;
 
-        // want to keep track of all co-ordinates, parity co-ordinates, co-ordinates guessed
-        // neighbour co-ordinate of a correct guess will be in allCoordinates
-        // unless already guessed -- prevent repeat guesses
+    // keep track of which mode the player is in, defaut is MODE.TARGETING
+    Mode whichMode = Mode.TARGETING;
 
-        // Store all potential coordinates of grid
-        ArrayList<World.Coordinate> allCoordinates = new ArrayList<World.Coordinate>();
-        // A subset of allCoordinates, taking every second element
-        ArrayList<World.Coordinate> parityCoordinates = new ArrayList<World.Coordinate>();
-        Stack<World.Coordinate> coordinatesRandomOrder = new Stack<World.Coordinate>();
-        // Of a hit coordinate, the 4 potential neighbour coordinates N, E, S, W, max 4, min 0
-        // clear when ship is sunk
-        ArrayDeque<World.Coordinate> huntingCoordinates = new ArrayDeque<World.Coordinate>();
+    // want to keep track of all co-ordinates, parity co-ordinates, co-ordinates guessed
+    // neighbour co-ordinate of a correct guess will be in allCoordinates
+    // unless already guessed -- prevent repeat guesses
+
+    // Store all potential coordinates of grid
+    ArrayList<World.Coordinate> allCoordinates = new ArrayList<World.Coordinate>();
+    // A subset of allCoordinates, taking every second element
+    ArrayList<World.Coordinate> parityCoordinates = new ArrayList<World.Coordinate>();
+    Stack<World.Coordinate> coordinatesRandomOrder = new Stack<World.Coordinate>();
+    // Of a hit coordinate, the 4 potential neighbour coordinates N, E, S, W, max 4, min 0
+    // clear when ship is sunk
+    ArrayDeque<World.Coordinate> huntingCoordinates = new ArrayDeque<World.Coordinate>();
 
     @Override
     public void initialisePlayer(World world) {
@@ -232,7 +234,11 @@ public class GreedyGuessPlayer  implements Player{
             } else {
 
                 // select an element from all coordinates, use this to make a guess
-                World.Coordinate newGuessCoordinate = this.allCoordinates.get(0);
+                //use rand int , 0 -> allCoordinates.size()
+            
+                World.Coordinate newGuessCoordinate = this.allCoordinates.get(
+                    random.nextInt(this.allCoordinates.size())
+                );
 
                 this.allCoordinates.remove(newGuessCoordinate);
 
@@ -352,17 +358,18 @@ public class GreedyGuessPlayer  implements Player{
             // don't clear the entire stack, just the coordinates in ship_sunk
             // leaves the coordinates of a ship if adjacent.
 
-            // for(World.Coordinate coordinatesOfShip : answer.shipSunk.shipLocations.coordinates) {
-            //
-            //     if(this.huntingCoordinates.contains(coordinatesOfShip)) {
-            //
-            //         this.huntingCoordinates.remove(coordinatesOfShip);
-            //     }
-            // }
+            for(World.Coordinate coordinatesOfShip : answer.shipSunk.shipLocations.coordinates) {
 
-            this.huntingCoordinates.clear();
+                if(this.huntingCoordinates.contains(coordinatesOfShip)) {
+
+                    this.huntingCoordinates.remove(coordinatesOfShip);
+                }
+            }
+
+            // this.huntingCoordinates.clear();
 
             // ship sunk, set back to MODE.TARGETING mode
+
             this.whichMode = Mode.TARGETING;
 
             this.numberOfShipsRemaing--;
