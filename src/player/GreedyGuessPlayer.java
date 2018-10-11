@@ -366,7 +366,7 @@ public class GreedyGuessPlayer  implements Player{
             //     }
             // }
 
-            // this.huntingCoordinates.clear();
+            this.huntingCoordinates.clear();
 
             // ship sunk, set back to MODE.TARGETING mode
 
