@@ -22,6 +22,7 @@ public class GreedyGuessPlayer implements Player{
 
   // Store all potential coordinates of grid
   ArrayList<World.Coordinate> allCoordinates = new ArrayList<World.Coordinate>();
+  ArrayList<World.Coordinate> shots = new ArrayList<World.Coordinate>();
   // Stack of grid locations
   Stack<World.Coordinate> parityCoordinates = new Stack<World.Coordinate>();
   // The stack to be used for targetting if we're in targetting mode
@@ -41,7 +42,10 @@ public class GreedyGuessPlayer implements Player{
         newCoordinate.row = row;
         newCoordinate.column = column;
 
-        this.allCoordinates.add(newCoordinate);
+        if(!this.allCoordinates.contains(newCoordinate)) {
+          this.allCoordinates.add(newCoordinate);
+        }
+
         // on every odd row, use odd column, else use even col when on even row
         if(((row % 2 != 0) && (column % 2 != 0)) || ((row % 2 == 0) && (column % 2 == 0))) {
           this.parityCoordinates.push(newCoordinate);
@@ -114,12 +118,12 @@ public class GreedyGuessPlayer implements Player{
       if(!this.targettedSectors.empty()) {
         // Try to eliminate these sectors first, ie guess here first
         newGuessCoordinate = this.targettedSectors.pop();
+        parityCoordinates.remove(newGuessCoordinate);
       }
     }
 
     newGuess.row = newGuessCoordinate.row;
     newGuess.column = newGuessCoordinate.column;
-
     return newGuess;
   } // end of makeGuess()
 
@@ -133,7 +137,7 @@ public class GreedyGuessPlayer implements Player{
     shot.column = guess.column;
 
     // Keep track of our previous shots
-    this.world.shots.add(shot);
+    this.shots.add(shot);
 
     // if our shot just hit a ship then we should switch firing modes
     if(answer.isHit) {
@@ -165,7 +169,7 @@ public class GreedyGuessPlayer implements Player{
 
       for(World.Coordinate sector : neighbours) {
         // Add each of the adjacent sectors if they arent already fired upon
-        if(!this.world.shots.contains(sector) && this.allCoordinates.contains(sector)) {
+        if(!this.shots.contains(sector) && this.allCoordinates.contains(sector)) {
           this.targettedSectors.push(sector);
         }
       }
