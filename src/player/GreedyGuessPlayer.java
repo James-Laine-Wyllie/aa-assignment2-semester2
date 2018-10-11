@@ -160,6 +160,8 @@ public class GreedyGuessPlayer  implements Player{
         // -- ship
         // -- arraylist<Coordinate>
 
+        Iterator shipLocations = this.world.shipLocations.iterator();
+
         for(World.ShipLocation shipLocation : this.world.shipLocations) {
 
             System.out.println("Ship Location: ");
@@ -172,11 +174,11 @@ public class GreedyGuessPlayer  implements Player{
             // remove coordinates from the ship on hit, if empty after hit, ship is sunk
             // Coordinate class has built in isSame() to check equality
 
-            for(World.Coordinate coordinatesOfShip : shipLocation.coordinates) {
+            Iterator coordinatesOfShipIterator = shipLocation.coordinates.iterator();
 
-                System.out.println(coordinatesOfShip.toString());
+            while(coordinatesOfShipIterator.hasNext()) {
 
-                // potential issue with equals method --------- check if if not working as expected
+                World.Coordinate coordinatesOfShip = (World.Coordinate) coordinatesOfShipIterator.next();
 
                 if(coordinatesOfShot.equals(coordinatesOfShip)) {
 
@@ -185,10 +187,28 @@ public class GreedyGuessPlayer  implements Player{
 
                     // remove coordinates from the ship to keep track of if ship is sunk
                     // if all coordinates removed --> shipLocations.coordinates will be empty
-                    shipLocation.coordinates.remove(coordinatesOfShip);
+                    coordinatesOfShipIterator.remove();
                 }
 
             }
+
+            // for(World.Coordinate coordinatesOfShip : shipLocation.coordinates) {
+            //
+            //     System.out.println(coordinatesOfShip.toString());
+            //
+            //     // potential issue with equals method --------- check if if not working as expected
+            //
+            //     if(coordinatesOfShot.equals(coordinatesOfShip)) {
+            //
+            //         // hit condition
+            //         answer.isHit = true;
+            //
+            //         // remove coordinates from the ship to keep track of if ship is sunk
+            //         // if all coordinates removed --> shipLocations.coordinates will be empty
+            //         shipLocation.coordinates.remove(coordinatesOfShip);
+            //     }
+            //
+            // }
 
             if(shipLocation.coordinates.isEmpty()) {
 
@@ -235,7 +255,7 @@ public class GreedyGuessPlayer  implements Player{
 
                 // select an element from all coordinates, use this to make a guess
                 //use rand int , 0 -> allCoordinates.size()
-            
+
                 World.Coordinate newGuessCoordinate = this.allCoordinates.get(
                     random.nextInt(this.allCoordinates.size())
                 );
@@ -358,15 +378,15 @@ public class GreedyGuessPlayer  implements Player{
             // don't clear the entire stack, just the coordinates in ship_sunk
             // leaves the coordinates of a ship if adjacent.
 
-            for(World.Coordinate coordinatesOfShip : answer.shipSunk.shipLocations.coordinates) {
+            // for(World.Coordinate coordinatesOfShip : answer.shipSunk.shipLocations.coordinates) {
+            //
+            //     if(this.huntingCoordinates.contains(coordinatesOfShip)) {
+            //
+            //         this.huntingCoordinates.remove(coordinatesOfShip);
+            //     }
+            // }
 
-                if(this.huntingCoordinates.contains(coordinatesOfShip)) {
-
-                    this.huntingCoordinates.remove(coordinatesOfShip);
-                }
-            }
-
-            // this.huntingCoordinates.clear();
+            this.huntingCoordinates.clear();
 
             // ship sunk, set back to MODE.TARGETING mode
 
@@ -392,10 +412,10 @@ public class GreedyGuessPlayer  implements Player{
         // number of ships = 0, game over
         if(this.numberOfShipsRemaing == 0) {
 
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
 
     } // end of noRemainingShips()
 

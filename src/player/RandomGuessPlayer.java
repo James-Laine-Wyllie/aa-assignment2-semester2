@@ -75,9 +75,7 @@ public class RandomGuessPlayer implements Player{
         for(int row = 0; row < numRow; row++) {
 
             for(int column = 0; column < numColumn; column++) {
-                // !!!!!!!!!! ---- ISSUE: how to create a co-ordinate outside world class ---->
 
-                // this works, not sure why
                 World.Coordinate newCoordinate = world.new Coordinate();
 
                 newCoordinate.row = row;
@@ -119,7 +117,6 @@ public class RandomGuessPlayer implements Player{
 
     @Override
     public Answer getAnswer(Guess guess) {
-        // To be implemented.
 
         // construct an answer object
 
@@ -190,16 +187,14 @@ public class RandomGuessPlayer implements Player{
     @Override
     public Guess makeGuess() {
 
-        // Implement some check to ensure stack not empty
-
-
         // Have a stack of random coordinates
         // pop one, use object to Generate a guess object
         // return guess object
 
+        Guess newGuess = new Guess();
+
         World.Coordinate newGuessCoordinate = this.coordinatesRandomOrder.pop();
 
-        Guess newGuess = new Guess();
         newGuess.row = newGuessCoordinate.row;
         newGuess.column = newGuessCoordinate.column;
 
@@ -210,7 +205,6 @@ public class RandomGuessPlayer implements Player{
 
     @Override
     public void update(Guess guess, Answer answer) {
-        // To be implemented.
 
         // update the board, draw a red x on board
         this.world.drawShot(guess);
@@ -232,10 +226,10 @@ public class RandomGuessPlayer implements Player{
         // number of ships = 0, game over
         if(this.numberOfShipsRemaing == 0) {
 
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     } // end of noRemainingShips()
 
 } // end of class RandomGuessPlayer
