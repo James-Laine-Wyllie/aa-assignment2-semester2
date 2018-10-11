@@ -143,7 +143,7 @@ public class GreedyGuessPlayer implements Player{
     if(answer.isHit) {
       this.targetingMode = Mode.TARGETING;
       // Empty out the targetting sectors and then add the adjacent sectors
-      this.targettedSectors.clear();
+      // this.targettedSectors.clear();
 
       // Keep track of the neighbours of the shot, for calculating future shots
       ArrayList<World.Coordinate> neighbours = new ArrayList<World.Coordinate>();
@@ -173,12 +173,14 @@ public class GreedyGuessPlayer implements Player{
           this.targettedSectors.push(sector);
         }
       }
+    }
 
-      if(answer.shipSunk != null) {
-        // switch back to hunting mode only after a ship is sunk
-        this.targetingMode = Mode.HUNTING;
-        this.numberOfShipsRemaing--;
-      }
+    if(answer.shipSunk != null) {
+      // switch back to hunting mode only after a ship is sunk
+      this.targetingMode = Mode.HUNTING;
+      this.targettedSectors.clear();
+      this.numberOfShipsRemaing--;
+      System.out.printf("Ships left:\n\t%d\n", numberOfShipsRemaing);
     }
   } // end of update()
 
