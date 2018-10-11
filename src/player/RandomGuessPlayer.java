@@ -13,15 +13,7 @@ import java.util.*;
 public class RandomGuessPlayer implements Player{
 
     // attributes to keep track of ships, co-ordinates, and remaining ships
-
     World world;
-
-    // these can be accesed via the world object: this.world.numRow
-    // convient varaible to keep track inside player
-
-    // to keep track of guesses made on board add combination of rows x column
-    // to a queue and pop
-    // ensures guess only made once, and random
 
     int numRow;
     int numColumn;
