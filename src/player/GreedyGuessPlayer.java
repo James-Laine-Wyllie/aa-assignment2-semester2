@@ -62,23 +62,26 @@ public class GreedyGuessPlayer implements Player{
 
     // if the guess' row and column match a ship, flag it as hit
     ArrayList<World.ShipLocation> shipLocations = this.world.shipLocations;
+    World.Coordinate shot = world.new Coordinate();
+    shot.row = guess.row;
+    shot.column = guess.column;
 
-    // TODO: fix with iterators
-    Iterator locsIterator = new shipLocations.iterator();
-
+    Iterator locsIterator = shipLocations.iterator();
     // enter TARGETING mode if we get a hit against the other player's ship
     while(locsIterator.hasNext()) {
-      // World.ShipLocation ship = locsIterator.next();
+      World.ShipLocation shipLocation = (World.ShipLocation) locsIterator.next();
 
-      Iterator shipIterator = new shipLocations.iterator();
-      while(shipIterator.hasNext()) {
+      Iterator coordsIterator = shipLocation.coordinates.iterator();
+      while(coordsIterator.hasNext()) {
+        World.Coordinate shipCoord = (World.Coordinate) coordsIterator.next();
+
         // hit condition
-        if(guess.equals(shipCoordinate)) {
+        if(shipCoord.equals(shot)) {
           answer.isHit = true;
 
           // remove coordinates from the ship to keep track of if ship is sunk
           // if all coordinates removed --> shipLocations.coordinates will be empty
-          shipLocation.coordinates.remove(shipCoordinate);
+          coordsIterator.remove();
         }
       }
 
@@ -138,42 +141,39 @@ public class GreedyGuessPlayer implements Player{
       // Empty out the targetting sectors and then add the adjacent sectors
       this.targettedSectors.clear();
 
+      // Keep track of the neighbours of the shot, for calculating future shots
+      ArrayList<World.Coordinate> neighbours = new ArrayList<World.Coordinate>();
+      // Add each of the shot's neighbours
+      World.Coordinate north = world.new Coordinate();
+      World.Coordinate south = world.new Coordinate();
+      World.Coordinate east = world.new Coordinate();
+      World.Coordinate west = world.new Coordinate();
+
+      north.row = shot.row + 1;
+      north.column = shot.column;
+      south.row = shot.row - 1;
+      south.column = shot.column;
+      east.row = shot.row;
+      east.column = shot.column + 1;
+      west.row = shot.row;
+      west.column = shot.column - 1;
+
+      neighbours.add(north);
+      neighbours.add(south);
+      neighbours.add(east);
+      neighbours.add(west);
+
+      for(World.Coordinate sector : neighbours) {
+        // Add each of the adjacent sectors if they arent already fired upon
+        if(!this.world.shots.contains(sector) && this.allCoordinates.contains(sector)) {
+          this.targettedSectors.push(sector);
+        }
+      }
+
       if(answer.shipSunk != null) {
         // switch back to hunting mode only after a ship is sunk
         this.targetingMode = Mode.HUNTING;
         this.numberOfShipsRemaing--;
-      }
-    }
-
-    // Keep track of the neighbours of the shot, for calculating future shots
-    ArrayList<World.Coordinate> neighbours = new ArrayList<World.Coordinate>();
-    // Add each of the shot's neighbours
-    World.Coordinate north = world.new Coordinate();
-    World.Coordinate south = world.new Coordinate();
-    World.Coordinate east = world.new Coordinate();
-    World.Coordinate west = world.new Coordinate();
-
-    north.row = shot.row + 1;
-    north.column = shot.column;
-
-    south.row = shot.row - 1;
-    south.column = shot.column;
-
-    east.row = shot.row;
-    east.column = shot.column + 1;
-
-    west.row = shot.row;
-    west.column = shot.column - 1;
-
-    neighbours.add(north);
-    neighbours.add(south);
-    neighbours.add(east);
-    neighbours.add(west);
-
-    for(World.Coordinate sector : neighbours) {
-      // Add each of the adjacent sectors if they arent already fired upon
-      if(!this.world.shots.contains(sector) && this.allCoordinates.contains(sector)) {
-        this.targettedSectors.push(sector);
       }
     }
   } // end of update()
