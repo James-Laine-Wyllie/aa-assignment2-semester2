@@ -235,7 +235,7 @@ public class GreedyGuessPlayer  implements Player{
 
                 // select an element from all coordinates, use this to make a guess
                 //use rand int , 0 -> allCoordinates.size()
-            
+
                 World.Coordinate newGuessCoordinate = this.allCoordinates.get(
                     random.nextInt(this.allCoordinates.size())
                 );
@@ -358,13 +358,13 @@ public class GreedyGuessPlayer  implements Player{
             // don't clear the entire stack, just the coordinates in ship_sunk
             // leaves the coordinates of a ship if adjacent.
 
-            for(World.Coordinate coordinatesOfShip : answer.shipSunk.shipLocations.coordinates) {
-
-                if(this.huntingCoordinates.contains(coordinatesOfShip)) {
-
-                    this.huntingCoordinates.remove(coordinatesOfShip);
-                }
-            }
+            // for(World.Coordinate coordinatesOfShip : answer.shipSunk.shipLocations.coordinates) {
+            //
+            //     if(this.huntingCoordinates.contains(coordinatesOfShip)) {
+            //
+            //         this.huntingCoordinates.remove(coordinatesOfShip);
+            //     }
+            // }
 
             // this.huntingCoordinates.clear();
 
