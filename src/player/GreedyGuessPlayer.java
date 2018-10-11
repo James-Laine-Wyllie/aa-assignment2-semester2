@@ -30,7 +30,7 @@ public class GreedyGuessPlayer implements Player{
   @Override
   public void initialisePlayer(World world) {
     // Keep track of the board and ships
-    this.targetingMode = Mode.TARGETING;
+    this.targetingMode = Mode.HUNTING;
     this.world = world;
     this.ships = world.shipLocations.size();
     this.numberOfShipsRemaing = this.ships;
@@ -41,12 +41,17 @@ public class GreedyGuessPlayer implements Player{
         newCoordinate.row = row;
         newCoordinate.column = column;
 
-        allCoordinates.add(newCoordinate);
+        this.allCoordinates.add(newCoordinate);
         // on every odd row, use odd column, else use even col when on even row
         if(((row % 2 != 0) && (column % 2 != 0)) || ((row % 2 == 0) && (column % 2 == 0))) {
-          parityCoordinates.push(newCoordinate);
+          this.parityCoordinates.push(newCoordinate);
         }
       }
+    }
+    // shuffle random.nextInt(n) times, where n = 5
+    Random randy = new Random();
+    for(int r = 0; r < randy.nextInt(5); r++) {
+      Collections.shuffle(this.parityCoordinates);
     }
   } // end of initialisePlayer()
 
@@ -57,12 +62,16 @@ public class GreedyGuessPlayer implements Player{
 
     // if the guess' row and column match a ship, flag it as hit
     ArrayList<World.ShipLocation> shipLocations = this.world.shipLocations;
-    ArrayList<World.Coordinate> shipCoordinates = null;
+
+    // TODO: fix with iterators
+    Iterator locsIterator = new shipLocations.iterator();
 
     // enter TARGETING mode if we get a hit against the other player's ship
-    for(World.ShipLocation shipLocation : shipLocations) {
-      shipCoordinates = shipLocation.coordinates;
-      for(World.Coordinate shipCoordinate : shipCoordinates) {
+    while(locsIterator.hasNext()) {
+      // World.ShipLocation ship = locsIterator.next();
+
+      Iterator shipIterator = new shipLocations.iterator();
+      while(shipIterator.hasNext()) {
         // hit condition
         if(guess.equals(shipCoordinate)) {
           answer.isHit = true;
@@ -87,12 +96,12 @@ public class GreedyGuessPlayer implements Player{
     World.Coordinate newGuessCoordinate = world.new Coordinate();
 
     // Before we have secured a hit, target based off of our parityCoordinates
-    if(this.targetingMode == Mode.TARGETING) {
+    if(this.targetingMode == Mode.HUNTING) {
       // Only attempt to pop from the stack if not empty
       if(!this.parityCoordinates.empty()) {
         newGuessCoordinate = this.parityCoordinates.pop();
       }
-    } else if(this.targetingMode == Mode.HUNTING){
+    } else if(this.targetingMode == Mode.TARGETING){
       // We're in targetting mode and have knowledge of a ship's location
       // Therefore we choose a coord within range of 1 of the pervious shot
       // otherwise known as popping the next targettedSectors element
@@ -120,15 +129,20 @@ public class GreedyGuessPlayer implements Player{
     shot.row = guess.row;
     shot.column = guess.column;
 
-    // Empty out the targetting sectors and then add the adjacent sectors
-    this.targettedSectors.clear();
+    // Keep track of our previous shots
+    this.world.shots.add(shot);
 
     // if our shot just hit a ship then we should switch firing modes
     if(answer.isHit) {
       this.targetingMode = Mode.TARGETING;
-    } else if(answer.shipSunk != null) {
-      // switch back to hunting mode only after a ship is sunk
-      this.targetingMode = Mode.HUNTING;
+      // Empty out the targetting sectors and then add the adjacent sectors
+      this.targettedSectors.clear();
+
+      if(answer.shipSunk != null) {
+        // switch back to hunting mode only after a ship is sunk
+        this.targetingMode = Mode.HUNTING;
+        this.numberOfShipsRemaing--;
+      }
     }
 
     // Keep track of the neighbours of the shot, for calculating future shots
@@ -158,15 +172,10 @@ public class GreedyGuessPlayer implements Player{
 
     for(World.Coordinate sector : neighbours) {
       // Add each of the adjacent sectors if they arent already fired upon
-      if(!this.world.shots.contains(sector)) {
+      if(!this.world.shots.contains(sector) && this.allCoordinates.contains(sector)) {
         this.targettedSectors.push(sector);
       }
     }
-
-    // Decrement ships remaining if answer contains sunk as a ship
-    // if(answer.shipSunk != null) {
-    //   this.numberOfShipsRemaing--;
-    // }
   } // end of update()
 
   @Override
