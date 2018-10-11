@@ -180,7 +180,6 @@ public class GreedyGuessPlayer implements Player{
       this.targetingMode = Mode.HUNTING;
       this.targettedSectors.clear();
       this.numberOfShipsRemaing--;
-      System.out.printf("Ships left:\n\t%d\n", numberOfShipsRemaing);
     }
   } // end of update()
 
