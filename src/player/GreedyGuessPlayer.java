@@ -172,11 +172,11 @@ public class GreedyGuessPlayer  implements Player{
             // remove coordinates from the ship on hit, if empty after hit, ship is sunk
             // Coordinate class has built in isSame() to check equality
 
-            for(World.Coordinate coordinatesOfShip : shipLocation.coordinates) {
+            Iterator coordinatesOfShipIterator = shipLocation.coordinates.iterator();
 
-                System.out.println(coordinatesOfShip.toString());
+            while(coordinatesOfShipIterator.hasNext()) {
 
-                // potential issue with equals method --------- check if if not working as expected
+                World.Coordinate coordinatesOfShip = (World.Coordinate) coordinatesOfShipIterator.next();
 
                 if(coordinatesOfShot.equals(coordinatesOfShip)) {
 
@@ -185,10 +185,28 @@ public class GreedyGuessPlayer  implements Player{
 
                     // remove coordinates from the ship to keep track of if ship is sunk
                     // if all coordinates removed --> shipLocations.coordinates will be empty
-                    shipLocation.coordinates.remove(coordinatesOfShip);
+                    coordinatesOfShipIterator.remove();
                 }
 
             }
+
+            // for(World.Coordinate coordinatesOfShip : shipLocation.coordinates) {
+            //
+            //     System.out.println(coordinatesOfShip.toString());
+            //
+            //     // potential issue with equals method --------- check if if not working as expected
+            //
+            //     if(coordinatesOfShot.equals(coordinatesOfShip)) {
+            //
+            //         // hit condition
+            //         answer.isHit = true;
+            //
+            //         // remove coordinates from the ship to keep track of if ship is sunk
+            //         // if all coordinates removed --> shipLocations.coordinates will be empty
+            //         shipLocation.coordinates.remove(coordinatesOfShip);
+            //     }
+            //
+            // }
 
             if(shipLocation.coordinates.isEmpty()) {
 
