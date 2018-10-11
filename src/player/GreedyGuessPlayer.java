@@ -18,15 +18,19 @@ enum Mode {
 public class GreedyGuessPlayer implements Player{
   World world;
   int ships, numberOfShipsRemaing;
+  Mode targetingMode;
 
   // Store all potential coordinates of grid
   ArrayList<World.Coordinate> allCoordinates = new ArrayList<World.Coordinate>();
   // Stack of grid locations
   Stack<World.Coordinate> parityCoordinates = new Stack<World.Coordinate>();
+  // The stack to be used for targetting if we're in targetting mode
+  Stack<World.Coordinate> targettedSectors = new Stack<World.Coordinate>();
 
   @Override
   public void initialisePlayer(World world) {
     // Keep track of the board and ships
+    this.targetingMode = Mode.TARGETING;
     this.world = world;
     this.ships = world.shipLocations.size();
     this.numberOfShipsRemaing = this.ships;
@@ -56,6 +60,8 @@ public class GreedyGuessPlayer implements Player{
     // if the guess' row and column match a ship, flag it as hit
     // ArrayList<ShipLocation> shipLocs = this.world.shipLocations;
 
+    // enter TARGETING mode if we get a hit against the other player's ship
+
     // for(ShipLocation shipLoc : shipLocs) {
     //   if(shot.equals(shipLoc)) {
     //     answer.isHit = true;
@@ -72,10 +78,30 @@ public class GreedyGuessPlayer implements Player{
 
   @Override
   public Guess makeGuess() {
-    // Update this method to use the parityCoordinates in hunting mode
-    World.Coordinate newGuessCoordinate = this.parityCoordinates.pop();
-
     Guess newGuess = new Guess();
+    World.Coordinate newGuessCoordinate = world.new Coordinate();
+
+    // Before we have secured a hit, target based off of our parityCoordinates
+    if(this.targetingMode == Mode.TARGETING) {
+      // Only attempt to pop from the stack if not empty
+      if(!this.parityCoordinates.empty()) {
+        newGuessCoordinate = this.parityCoordinates.pop();
+        System.out.println(newGuessCoordinate);
+      }
+    } else if(this.targetingMode == Mode.HUNTING){
+      // We're in targetting mode and have knowledge of a ship's location
+      // Therefore we choose a coord within range of 1 of the pervious shot
+      // otherwise known as popping the next targettedSectors element
+
+      // targettedSectors will be emptied if we successfully hit on a consequent shot
+      // and it will be repopulated with the neighbours of that subsequent hit
+      if(!this.targettedSectors.empty()) {
+        // Try to eliminate these sectors first, ie guess here first
+        newGuessCoordinate = this.targettedSectors.pop();
+        System.out.println(newGuessCoordinate);
+      }
+    }
+
     newGuess.row = newGuessCoordinate.row;
     newGuess.column = newGuessCoordinate.column;
 
@@ -88,9 +114,9 @@ public class GreedyGuessPlayer implements Player{
     this.world.drawShot(guess);
 
     // Decrement ships remaining if answer contains sunk as a ship
-    if(answer.shipSunk != null) {
-      this.numberOfShipsRemaing--;
-    }
+    // if(answer.shipSunk != null) {
+    //   this.numberOfShipsRemaing--;
+    // }
   } // end of update()
 
   @Override
