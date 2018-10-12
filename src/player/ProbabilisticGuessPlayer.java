@@ -29,9 +29,9 @@ public class ProbabilisticGuessPlayer  implements Player{
     public int liklihood;
     public World.Coordinate shot;
 
-    public void ShotProb(int lik, World.Coordinate shot) {
-      this.shot = shot;
-      this.liklihood = lik;
+    public ShotProb(int liklihood, World.Coordinate shot) {
+      liklihood = liklihood;
+      shot = shot;
     }
   }
 
@@ -54,7 +54,6 @@ public class ProbabilisticGuessPlayer  implements Player{
     this.world = world;
     this.shipCount = world.shipLocations.size();
 
-    // iterate through all of the world grid coords and store parityCoordinates
     for(int row = 0; row < world.numRow; row++) {
       for(int column = 0; column < world.numColumn; column++) {
         World.Coordinate newCoordinate = world.new Coordinate();
@@ -67,7 +66,10 @@ public class ProbabilisticGuessPlayer  implements Player{
 
         // Update the liklihood for each coord and store it in possibleShots
         // Calc probability from the row/col
-        ShotProb shot = new ShotProb(newCoordinate, 1);
+        int pr = 0;
+        // TODO calculate pr
+
+        ShotProb shot = new ShotProb(pr, newCoordinate);
         possibleShots.add(shot);
       }
     }
@@ -117,24 +119,17 @@ public class ProbabilisticGuessPlayer  implements Player{
     Guess newGuess = new Guess();
     World.Coordinate newGuessCoordinate = world.new Coordinate();
 
-    // Before we have secured a hit, target based off of our parityCoordinates
     if(this.targetingMode == Mode.HUNTING) {
-      // Only attempt to pop from the stack if not empty
-      if(!this.parityCoordinates.empty()) {
-        newGuessCoordinate = this.parityCoordinates.pop();
-      }
+      // Do some target selection based off of highest pr
+      // TODO make an 'edcated' guess as to which of the shots is most valid
+
     } else if(this.targetingMode == Mode.TARGETING){
       // We're in targetting mode and have knowledge of a ship's location
       // Therefore we choose a coord within range of 1 of the pervious shot
-      // otherwise known as popping the next targettedSectors element
+      // Base this off of the pr contained in targettedSectors
 
-      // targettedSectors will be emptied if we successfully hit on a consequent shot
-      // and it will be repopulated with the neighbours of that subsequent hit
-      if(!this.targettedSectors.empty()) {
-        // Try to eliminate these sectors first, ie guess here first
-        newGuessCoordinate = this.targettedSectors.pop();
-        parityCoordinates.remove(newGuessCoordinate);
-      }
+      // TODO make an 'edcated' guess as to which of the targettedSectors is most valid
+
     }
 
     newGuess.row = newGuessCoordinate.row;
@@ -152,7 +147,7 @@ public class ProbabilisticGuessPlayer  implements Player{
     shot.column = guess.column;
 
     // Keep track of our previous shots
-    this.shots.add(shot);
+    this.shotsFired.add(shot);
 
     // if our shot just hit a ship then we should switch firing modes
     if(answer.isHit) {
@@ -184,8 +179,12 @@ public class ProbabilisticGuessPlayer  implements Player{
 
       for(World.Coordinate sector : neighbours) {
         // Add each of the adjacent sectors if they arent already fired upon
-        if(!this.shots.contains(sector) && this.allCoordinates.contains(sector)) {
-          this.targettedSectors.push(sector);
+        if(!this.shotsFired.contains(sector) && this.allCoordinates.contains(sector)) {
+          // again, calculate the pr of the neighbour being a valid shot before adding
+          int pr = 0;
+          // TODO calc pr
+
+          this.targettedSectors.add(new ShotProb(pr, sector));
         }
       }
     }
@@ -194,7 +193,7 @@ public class ProbabilisticGuessPlayer  implements Player{
       // switch back to hunting mode only after a ship is sunk
       this.targetingMode = Mode.HUNTING;
       this.targettedSectors.clear();
-      this.numberOfShipsRemaing--;
+      this.shipCount--;
     }
   } // end of update()
 
