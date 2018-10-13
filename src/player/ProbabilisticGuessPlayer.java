@@ -210,12 +210,45 @@ public class ProbabilisticGuessPlayer  implements Player{
       // Do some target selection based off of highest pr
       // TODO make an 'edcated' guess as to which of the shots is most valid
 
+      Iterator possibleShotsIterator = possibleShots.iterator();
+      ShotProb currentSelected = (ShotProb) possibleShotsIterator.next();
+
+      // interate through probablisitc, select highest one
+      while(possibleShotsIterator.hasNext()) {
+
+          ShotProb shotCheck = (ShotProb) possibleShotsIterator.next();
+
+          if(shotCheck.liklihood > currentSelected.liklihood) {
+
+              currentSelected = shotCheck;
+          }
+      }
+
+      // our guess will be the coordinate of current selected shot
+      newGuessCoordinate = currentSelected.shot;
+
     } else if(this.targetingMode == Mode.TARGETING){
       // We're in targetting mode and have knowledge of a ship's location
       // Therefore we choose a coord within range of 1 of the pervious shot
       // Base this off of the pr contained in targettedSectors
 
       // TODO make an 'edcated' guess as to which of the targettedSectors is most valid
+
+      Iterator targettedSectorsIterator = targettedSectors.iterator();
+      ShotProb currentSelectedSector = (ShotProb) targettedSectorsIterator.next();
+
+      // interate through probablisitc, select highest one
+      while(targettedSectorsIterator.hasNext()) {
+
+          ShotProb sectorCheck = (ShotProb)targettedSectorsIterator.next();
+
+          if(sectorCheck.liklihood > currentSelectedSector.liklihood) {
+
+              currentSelectedSector = sectorCheck;
+          }
+      }
+
+      newGuessCoordinate = currentSelectedSector.shot;
 
     }
 
