@@ -14,10 +14,10 @@ import world.World;
 *
 * @author Youhan Xia, Jeffrey Chan
 */
-enum Mode {
-  TARGETING,
-  HUNTING
-}
+// enum Mode {
+//   TARGETING,
+//   HUNTING
+// }
 
 public class ProbabilisticGuessPlayer  implements Player{
   /*
@@ -54,6 +54,15 @@ public class ProbabilisticGuessPlayer  implements Player{
     this.world = world;
     this.shipCount = world.shipLocations.size();
 
+    int aircraftCarrierConfigurations = 24;
+    int cruiserConfigurations = 12;
+    int frigateConfigurations = 8;
+    int submarineConfigurations  = 8;
+    int patrolCraftConfiguraions = 6;
+
+    int rowProbability = 0;
+    int columnProbability = 0;
+
     for(int row = 0; row < world.numRow; row++) {
       for(int column = 0; column < world.numColumn; column++) {
         World.Coordinate newCoordinate = world.new Coordinate();
@@ -66,11 +75,89 @@ public class ProbabilisticGuessPlayer  implements Player{
 
         // Update the liklihood for each coord and store it in possibleShots
         // Calc probability from the row/col
+
+        // probability is for each combination of a ship that can exist
+        // in the coordinate , assign a value 1, total this to get the value
+        // of the coordinate
+
         int pr = 0;
         // TODO calculate pr
 
+        if(row == 0 || row == 9) {
+
+            pr = (int) (0.5) * (aircraftCarrierConfigurations + cruiserConfigurations + frigateConfigurations
+                + submarineConfigurations + patrolCraftConfiguraions);
+
+            if(column == 1 || column == 9) {
+                pr = (int) (.40) * pr;
+            }
+
+            if(column == 2 || column == 8) {
+                pr = (int) (.65) * pr;
+            }
+
+            if(column == 3 || column == 7) {
+                pr = (int) (.90) * pr;
+            }
+        }
+
+        if(row == 1 || row == 8) {
+
+            pr = (int) (0.70) * (aircraftCarrierConfigurations + cruiserConfigurations + frigateConfigurations
+                + submarineConfigurations + patrolCraftConfiguraions);
+
+            if(column == 1 || column == 9) {
+                pr = (int) (.40) * pr;
+            }
+
+            if(column == 2 || column == 8) {
+                pr = (int) (.65) * pr;
+            }
+
+            if(column == 3 || column == 7) {
+                pr = (int) (.90) * pr;
+            }
+        }
+
+        if(row == 3 || row == 7) {
+
+            pr = (int) (0.90) * (aircraftCarrierConfigurations + cruiserConfigurations + frigateConfigurations
+                + submarineConfigurations + patrolCraftConfiguraions);
+
+            if(column == 1 || column == 9) {
+                pr = (int) (.40) * pr;
+            }
+
+            if(column == 2 || column == 8) {
+                pr = (int) (.65) * pr;
+            }
+
+            if(column == 3 || column == 7) {
+                pr = (int) (.90) * pr;
+            }
+        }
+
+
+
+        pr = (int) (aircraftCarrierConfigurations + cruiserConfigurations + frigateConfigurations
+            + submarineConfigurations + patrolCraftConfiguraions);
+
+        if(column == 1 || column == 9) {
+            pr = (int) (.40) * pr;
+        }
+
+        if(column == 2 || column == 8) {
+            pr = (int) (.65) * pr;
+        }
+
+        if(column == 3 || column == 7) {
+            pr = (int) (.90) * pr;
+        }
+
+
         ShotProb shot = new ShotProb(pr, newCoordinate);
         possibleShots.add(shot);
+
       }
     }
   } // end of initialisePlayer()
