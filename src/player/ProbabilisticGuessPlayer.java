@@ -160,7 +160,7 @@ public class ProbabilisticGuessPlayer  implements Player{
     for(int index = 0; index < possibleShots.size(); index++) {
 
         System.out.println("Shot: " + index);
-        System.out.printf("Coordinates:\n\t Row: %d Column: %d", possibleShots.get(index).shot.row, possibleShots.get(index).shot.column);
+        System.out.printf("Coordinates:\n\t Row: %d Column: %d\n", possibleShots.get(index).shot.row, possibleShots.get(index).shot.column);
         System.out.printf("probability: %d\n", possibleShots.get(index).liklihood);
         System.out.println("-------------------------\n");
 
@@ -227,9 +227,11 @@ public class ProbabilisticGuessPlayer  implements Player{
           if(shotCheck.liklihood > currentSelected.liklihood) {
 
               currentSelected = shotCheck;
+              // remove from possible shots
           }
       }
 
+      possibleShots.remove(currentSelected);
       // our guess will be the coordinate of current selected shot
       newGuessCoordinate = currentSelected.shot;
 
@@ -253,7 +255,7 @@ public class ProbabilisticGuessPlayer  implements Player{
               currentSelectedSector = sectorCheck;
           }
       }
-
+      targettedSectors.remove(currentSelectedSector);
       newGuessCoordinate = currentSelectedSector.shot;
 
     }
